@@ -8,7 +8,7 @@ public class NewDateInJava8 {
         //localDateTest();
         //localTimeTest();
         //combineLocalDateAndTime();
-//        instantTest();
+//        instantTest()
 //        dateFormatTest();
         dataParseTest();
     }
