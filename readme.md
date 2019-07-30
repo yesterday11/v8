@@ -1,6 +1,5 @@
 *  何时使用 findFirst 和 findAny
-
-    为什么会同时有findFirst和findAny呢？答案是并行。找到第一个元素在并行上限制更多。如果你不关心返回的元素是哪个，请使用 findAny ，因为它在使用并行流时限制较少。
+    >为什么会同时有findFirst和findAny呢？答案是并行。找到第一个元素在并行上限制更多。如果你不关心返回的元素是哪个，请使用 findAny ，因为它在使用并行流时限制较少。
 *  读取资源文件
 
 ```
@@ -51,8 +50,39 @@ R 是收集操作得到的对象（通常但并不一定是集合）的类型。
 
 *  并行流用的线程是从哪儿来的？有多少个？怎么自定义这个过程呢？  
 
- 并行流内部使用了默认的 ForkJoinPool，它默认的线 程 数 量 就是 你 的 处 理器 数 量 ， 这个 值 是 由 Runtime.getRuntime().available-
+ >并行流内部使用了默认的 ForkJoinPool，它默认的线 程 数 量 就是 你 的 处 理器 数 量 ， 这个 值 是 由 Runtime.getRuntime().available-
 Processors() 得到的 .可 以 通 过 系 统 属 性 java.util.concurrent.ForkJoinPool.common.parallelism 来改变线程池大小，如下所示：
 System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism","12");
 这是一个全局设置，它将影响代码中所有的并行流,除非你有很好的理由，否则我们强烈建议你不要修改它
 
+9.默认方法
+============================
+9.1随着默认方法在Java8中引入，有可能出现一个类继承了多个方法而它们使用的却是同样的函数签名。这种情况下，类会选择使用哪一个函数？
+>首先，类或父类中显式声明的方法，其优先级高于所有的默认方法。
+>如果用第一条无法判断，方法签名又没有区别，那么选择提供最具体实现的默认方法的 接口。
+>最后，如果冲突依旧无法解决，你就只能在你的类中覆盖该默认方法，显式地指定在你的类中使用哪一个接口中的方法。
+
+10.用optional取代null
+===========================
+10.1在域模型中使用 Optional ，以及为什么它们无法序列化
+ Optional 类设计时就没特别考虑将其作为类的字段使用，所以它也并未实现Serializable 接口。由于这个原因，如果你的应用使用了某些要求序列化的库或者框架，在
+域模型中使用 Optional ，有可能引发应用程序故障。
+
+在一定要实现序列化的域模型中，可以像下面这样来使用：
+```
+public class Person {
+    private Car car;
+    public Optional<Car> getCarAsOptional() {
+    return Optional.ofNullable(car);
+    }
+}
+```
+在不强制实现序列化的域模型中，可以像下面这样来使用：
+```
+public class Person {
+    private Optional<Car> car;
+    public Optional<Car> getCar() {
+        return car;
+    }
+}
+```

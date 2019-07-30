@@ -6,11 +6,12 @@ import java.util.stream.Stream;
 
 public class ParallelStreamDemo {
     public static void main(String[] args) {
-        System.out.println("Sequential sum done in:" + measureSumPerf(ParallelStreamDemo::sequentialSum, 10_000_000) + " msecs");
-        System.out.println("Sequential sum with range done in:" + measureSumPerf(ParallelStreamDemo::sequentialSumWithRange, 10_000_000) + " msecs");
-        System.out.println("Iterative sum done in:" + measureSumPerf(ParallelStreamDemo::iterativeSum, 10_000_000) + " msecs");
-        System.out.println("Parallel sum done in: " + measureSumPerf(ParallelStreamDemo::parallelSum, 10_000_000) + " msecs");
-        System.out.println("Parallel sum with range done in: " + measureSumPerf(ParallelStreamDemo::parallelSumWithRange, 10_000_000) + " msecs");
+        long n = 1_00_000_000;
+        System.out.println("Sequential sum done in:" + measureSumPerf(ParallelStreamDemo::sequentialSum, n) + " msecs");
+        System.out.println("Sequential sum with range done in:" + measureSumPerf(ParallelStreamDemo::sequentialSumWithRange, n) + " msecs");
+        System.out.println("Iterative sum done in:" + measureSumPerf(ParallelStreamDemo::iterativeSum, n) + " msecs");
+        System.out.println("Parallel sum done in: " + measureSumPerf(ParallelStreamDemo::parallelSum, n) + " msecs");
+        System.out.println("Parallel sum with range done in: " + measureSumPerf(ParallelStreamDemo::parallelSumWithRange, n) + " msecs");
     }
 
     public static long measureSumPerf(Function<Long, Long> adderFunction, long n) {
@@ -55,6 +56,7 @@ public class ParallelStreamDemo {
                 .parallel()
                 .reduce(0L, Long::sum);
     }
+
     //并行，
     public static long parallelSumWithRange(long n) {
         return LongStream.rangeClosed(1, n)
